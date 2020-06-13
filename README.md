@@ -24,4 +24,4 @@ For the Back (shown in the screenshot):
 
     {{FrontSide}} 
 
-This Addon is probably incompatible with a lot of other Addons, as it still Monkey-Patches a few functions directly instead of using hooks. If anyone wants to help improve the code or found a bug or incompatibility, please comment on the Addon page or create an Issue here on Github.
+This Addon is probably incompatible with a lot of other Addons, as it still Monkey-Patches a few functions directly instead of using hooks. If you want to help improve the code or found a bug or incompatibility, create an Issue here on Github (preferred) or message me at [henryrubenfischer@gmail.com](mailto:henryrubenfischer@gmail.com).
