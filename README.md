@@ -1,4 +1,4 @@
-# [Multiple-type-fields-on-Card-for-Anki-2.1]()
+# [Multiple-type-fields-on-Card-for-Anki-2.1](https://ankiweb.net/shared/info/711285688)
 A port of the Anki 2.0 Addon ["Multiple type fields on Card"](https://ankiweb.net/shared/info/689574440). All credit goes to the author of that package. 
 
 This addon allows the user to specify multiple independent `{{type:}}` fields on one card.  
