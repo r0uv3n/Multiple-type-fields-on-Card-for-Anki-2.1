@@ -1,6 +1,7 @@
 """ This module monkey patches the anki Reviewer to enable multiple type fields on cards. """
 
 import re
+from typing import Union, Callable, Match
 
 from aqt.clayout import CardLayout
 from aqt.reviewer import Reviewer
@@ -22,7 +23,7 @@ typetxts = document.getElementsByName("typetxt");
 function _getTypedTexts(){
     typedTexts = [];
     for (let i = 0, typedTextNode; (typedTextNode = typetxts[i]); i++) {
-        typedTexts.push(typedTextNode.value);
+        typedTexts.push(typedTextNode.value) ?? null;
     }
     return typedTexts;
 }
@@ -55,7 +56,7 @@ def myTypeAnsQuestionFilter(self, buf):
     clozeIdx = self.card.ord + 1
     fld = fld.split(":")[1]
   # loop through fields for a match
-  for f in self.card.model()["flds"]:
+  for f in self.card.note_type()["flds"]:
     if f["name"] == fld:
       typeCorrect = self.card.note()[f["name"]]
       if clozeIdx:
@@ -75,14 +76,14 @@ def myTypeAnsQuestionFilter(self, buf):
       return re.sub(self.typeAnsPat, warn, buf)
     else:
       # empty field, remove type answer pattern
-      return re.sub(self.typeAnsPat, "", buf)
+      return re.sub(self.typeAnsPat, "", buf, count=1)
   buf = re.sub(
       self.typeAnsPat, f"""
 <center>
-<input type=text id=typeans onkeypress="_typeAnsPress();"
+<input type=text id=typeans  name=typetxt onkeypress="_typeAnsPress();"
    style="font-family: '{self.typeFont}'; font-size: {self.typeSize}px;">
 </center>
-""", buf
+""", buf, count = 1
   )
   self.typeCorrect.append(typeCorrect)
   return self.typeAnsQuestionFilter(buf)
@@ -105,16 +106,18 @@ def myTypeAnsAnswerFilter(self, buf: str, i: int) -> str:
     # can't pass a string in directly, and can't use re.escape as it
     # escapes too much
     s = """
-<span style="font-family: '%s'; font-size: %spx">%s</span>""" % (
-        self.typeFont, self.typeSize, output
+<div style="font-family: '{}'; font-size: {}px">{}</div>""".format(
+        self.typeFont,
+        self.typeSize,
+        output,
     )
     if hadHR:
       # a hack to ensure the q/a separator falls before the answer
       # comparison when user is using {{FrontSide}}
-      s = "<hr id=answer>" + s
+      s = f"<hr id=answer>{s}"
     return s
 
-  buf = re.sub(self.typeAnsPat, repl, buf, 1)
+  buf = re.sub(self.typeAnsPat, repl, buf, count=1)
   return self.typeAnsAnswerFilter(buf, i + 1)
 
 
@@ -140,11 +143,30 @@ Reviewer._getTypedAnswer = myGetTypedAnswer
 
 
 # ==== CLayout ====
-def myMaybeTextInput(self, txt, type="q"):
-  ret = oldMaybeTextInput(self, txt, type)
+def myMaybeTextInput(self, txt: str, type: str = "q") -> str:
+  if "[[type:" not in txt:
+    return txt
+  origLen = len(txt)
+  txt = txt.replace("<hr id=answer>", "")
+  hadHR = origLen != len(txt)
+
+  def answerRepl(match: Match) -> str:
+    res = self.mw.col.compare_answer("example", "sample")
+    if hadHR:
+      res = f"<hr id=answer>{res}"
+    return res
+
+  type_filter = r"\[\[type:.+?\]\]"
+  repl: Union[str, Callable]
+
   if type == "q":
-    ret = re.sub("id='typeans'", "id='typeans' name='typetxt'", ret)
-  return ret
+    repl = "<input id='typeans' name='typetxt' type=text value='example' readonly='readonly'>"
+    repl = f"<center>{repl}</center>"
+  else:
+    repl = answerRepl
+  out = re.sub(type_filter, repl, txt)
+
+  return out
 
 
 oldMaybeTextInput = CardLayout.maybeTextInput
