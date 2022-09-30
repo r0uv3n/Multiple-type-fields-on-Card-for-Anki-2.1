@@ -2,8 +2,6 @@
 
 import re
 
-from anki.lang import _
-
 from aqt.clayout import CardLayout
 from aqt.reviewer import Reviewer
 from aqt.utils import tr
