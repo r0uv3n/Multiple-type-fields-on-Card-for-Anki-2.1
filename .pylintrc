@@ -1,0 +1,2 @@
+[Master]
+init-hook='import sys; sys.path.append("C:/Users/henry/OneDrive/Coding Projects/Anki Addons/anki")'

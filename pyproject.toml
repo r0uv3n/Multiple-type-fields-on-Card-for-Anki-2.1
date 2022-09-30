@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "multiple-type-fields-on-card-2-1"
+version = "0.1.0"
+description = "This addon allows the user to specify multiple independent {{type:}} fields on one card."
+authors = ["Henry Ruben Fischer <r0uv3n@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "~3.9"
+aqt = {version = "2.1.55b1", allow-prereleases = true}
+anki = {version = "2.1.55b1", allow-prereleases = true}
+
+
+[tool.poetry.group.dev.dependencies]
+yapf = "^0.32.0"
+pylint = "^2.15.3"
+aab = "^0.1.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
