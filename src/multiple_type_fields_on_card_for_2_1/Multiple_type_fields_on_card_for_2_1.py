@@ -128,7 +128,6 @@ def myGetTypedAnswer(self):
 def myOnTypedAnswer(self, val: None) -> None:
   self.typedAnswer = val or [""] * len(self.typeCorrect)
   self._showAnswer()
-  self.unfocus_typing_box()
 
 
 oldInit = Reviewer.__init__
