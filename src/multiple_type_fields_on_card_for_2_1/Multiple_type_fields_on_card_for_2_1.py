@@ -99,7 +99,7 @@ def myTypeAnsAnswerFilter(self, buf: str, i: int) -> str:
   expected = self.typeCorrect[i]
   provided = self.typedAnswer[i]
   # compare with typed answer
-  output = self.mw.col.compare_answer(provided, expected)
+  output = self.mw.col.compare_answer(expected, provided)
 
   # and update the type answer area
   def repl(match: Match) -> str:
