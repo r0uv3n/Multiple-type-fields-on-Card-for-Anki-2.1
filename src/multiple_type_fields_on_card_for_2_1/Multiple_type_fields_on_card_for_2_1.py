@@ -57,9 +57,6 @@ def myTypeAnsQuestionFilter(self, buf):
         # get field and cloze position
         clozeIdx = self.card.ord + 1
         fld = fld.split(":")[1]
-    if fld.startswith("nc:"):
-        self._combining = False
-        fld = fld.split(":")[1]
     # loop through fields for a match
     for f in self.card.note_type()["flds"]:
         if f["name"] == fld:
@@ -107,7 +104,7 @@ def myTypeAnsAnswerFilter(self, buf: str, i: int) -> str:
     expected = self.typeCorrect[i]
     provided = self.typedAnswer[i]
     # compare with typed answer
-    output = self.mw.col.compare_answer(expected, provided, self._combining)
+    output = self.mw.col.compare_answer(expected, provided)
 
     # and update the type answer area
     def repl(match: Match) -> str:
